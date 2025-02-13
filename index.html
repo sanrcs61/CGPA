@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="bn">
+<!-- Previous head section remains the same -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Anek+Bangla:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', 'Anek Bangla', sans-serif;
+            font-family: 'Anek Bangla', 'Inter', sans-serif;
             background-color: #f3f4f6;
             margin: 0;
             padding: 20px;
@@ -28,6 +29,8 @@
         h1 {
             text-align: center;
             color: #1f2937;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
         table {
             width: 100%;
@@ -35,7 +38,7 @@
             margin-bottom: 20px;
         }
         th, td {
-            padding: 10px;
+            padding: 12px;
             text-align: left;
             border-bottom: 1px solid #e5e7eb;
         }
@@ -45,6 +48,7 @@
             border: 1px solid #d1d5db;
             border-radius: 4px;
             background-color: white;
+            font-family: 'Anek Bangla', 'Inter', sans-serif;
         }
         .button-container {
             display: flex;
@@ -53,13 +57,17 @@
             margin-bottom: 20px;
         }
         button {
-            background-color: #111827;
+            background-color: #1f2937;
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 08px 16px;
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s;
+            font-size: 14px;
+            font-family: 'Anek Bangla', 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
         }
         button:hover {
             background-color: #374151;
@@ -68,27 +76,41 @@
             background-color: #9ca3af;
             cursor: not-allowed;
         }
+        button svg {
+            margin-right: 5px;
+        }
         #result {
             text-align: center;
             font-weight: bold;
             font-size: 18px;
             margin-top: 20px;
+            color: #1f2937;
         }
         .facebook-link {
             text-align: center;
             margin-top: 20px;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .facebook-link .logo-link {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 10px;
+            display: block;
         }
         .facebook-link img {
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            margin-bottom: 10px;
             transition: transform 0.3s;
         }
         .facebook-link img:hover {
             transform: scale(1.05);
         }
-        .facebook-link a {
+        .facebook-link .text-link {
             display: inline-block;
             background-color: #3bb54a;
             color: white;
@@ -96,10 +118,11 @@
             padding: 10px 15px;
             border-radius: 4px;
             transition: background-color 0.3s;
-            max-width: 400px;
-            word-wrap: break-word;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: 'Anek Bangla', 'Inter', sans-serif;
         }
-        .facebook-link a:hover {
+        .facebook-link .text-link:hover {
             background-color: #ffcc33;
         }
         @keyframes fadeIn {
@@ -109,9 +132,56 @@
         .fade-in {
             animation: fadeIn 0.5s ease-out;
         }
+        .redirect-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(45, 133, 108, 1);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+            max-width: 90%;
+            width: 400px;
+            box-shadow: 0 4px 20px rgba(45, 133, 108, 0.3);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .redirect-message .cgpa {
+            font-size: 36px;
+            font-weight: bold;
+            color: #4ade80;
+            margin: 10px 0;
+            display: block;
+        }
+
+        .redirect-message .message {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-top: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translate(-50%, -50%); }
+            to { opacity: 0; transform: translate(-50%, -40%); }
+        }
+
+        .fade-out {
+            animation: fadeOut 0.3s ease-in forwards;
+        }
     </style>
 </head>
 <body>
+    <!-- Add this div for redirect message -->
+    <div id="redirectMessage" class="redirect-message"></div>
     <div class="card fade-in">
         <h1>গ্রেড পয়েন্ট ক্যালকুলেটর</h1>
         <table id="gradeTable">
@@ -127,22 +197,134 @@
             </tbody>
         </table>
         <div class="button-container">
-            <button onclick="addSubject()">বিষয় যোগ করুন</button>
-            <button onclick="removeSubject()" id="removeButton">বিষয় বাদ দিন</button>
+            <button onclick="addSubject()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                বিষয় যোগ করুন
+            </button>
+            <button onclick="removeSubject()" id="removeButton">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                বিষয় বাদ দিন
+            </button>
         </div>
         <div id="result">সিজিপিএ দেখতে সব বিষয়ের গ্রেড ইনপুট করুন</div>
     </div>
     <div class="facebook-link fade-in">
-        <a href="https://www.facebook.com/aambaj.rajshahi" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.facebook.com/aambaj.rajshahi" target="_blank" rel="noopener noreferrer" class="logo-link">
             <img src="https://graph.facebook.com/aambaj.rajshahi/picture?type=large" alt="আম-বাজ Facebook Page">
         </a>
-        <a href="https://www.facebook.com/aambaj.rajshahi" target="_blank" rel="noopener noreferrer">
-            এই সাইটটি থেকে উপকৃত হয়ে থাকলে আমাদের ফেসবুক পেজ ফলো করার জন্য বিশেষ অনুরোধ রইল। বিভিন্ন রেজাল্ট জানতে আমাদের ফেসবুক পেজে রোল, রেজিস্ট্রেশন ও শিক্ষাবর্ষ দিন।
+        <a href="https://www.facebook.com/aambaj.rajshahi" target="_blank" rel="noopener noreferrer" class="text-link">
+            রাজশাহীর কেমিক্যাল মুক্ত আম পেতে আমাদের ফেসবুক পেজটি ফলো করুন। বিভিন্ন রেজাল্ট জানতে আমাদের ফেসবুক পেজে রোল, রেজিস্ট্রেশন ও শিক্ষাবর্ষ দিন। আমাদের ফেসবুক পেজটি দেখতে এখানে ক্লিক করুন।
         </a>
     </div>
-
+    
     <script>
-        const grades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "D", "F"];
+            async function logVisitor(cgpa = null) {
+                try {
+                    // Get IP and location
+                    let ipData, locationData;
+                    
+                    try {
+                        const ipResponse = await fetch('https://api.ipify.org?format=json');
+                        ipData = await ipResponse.json();
+                        
+                        const locationResponse = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
+                        locationData = await locationResponse.json();
+                    } catch (error) {
+                        console.error('Error fetching IP/location:', error);
+                        ipData = { ip: 'Unknown' };
+                        locationData = { city: 'Unknown', country_name: 'Unknown' };
+                    }
+                    
+                    // Prepare visitor data
+                    const visitorData = {
+                        ip: ipData.ip,
+                        location: `${locationData.city || 'Unknown'}, ${locationData.country_name || 'Unknown'}`,
+                        browser: getBrowser(),
+                        os: getOS(),
+                        userAgent: navigator.userAgent,
+                        referrer: document.referrer || 'Direct',
+                        cgpa: cgpa
+                    };
+
+                    const loggingUrl = 'https://script.google.com/macros/s/AKfycbwh2phsnqM5uj7z3fNHH1iD__Cgf4lXbJmsTzngGW2ktbrP8c8jRarEam1JRK2UfSka/exec';
+                    
+                    // Send data to Google Sheet
+                    const response = await fetch(loggingUrl, {
+                        method: 'POST',
+                        body: JSON.stringify(visitorData),
+                        mode: 'no-cors' // Add this line to handle CORS issues
+                    });
+                    
+                } catch (error) {
+                    console.error('Logging error:', error);
+                }
+            }
+
+        // Helper function to detect browser
+        function getBrowser() {
+            const userAgent = navigator.userAgent;
+            if (userAgent.includes('Firefox')) return 'Firefox';
+            if (userAgent.includes('Chrome')) return 'Chrome';
+            if (userAgent.includes('Safari')) return 'Safari';
+            if (userAgent.includes('Edge')) return 'Edge';
+            if (userAgent.includes('MSIE') || userAgent.includes('Trident/')) return 'Internet Explorer';
+            return 'Unknown';
+        }
+
+        // Helper function to detect OS
+        function getOS() {
+            const userAgent = navigator.userAgent;
+            
+            // For Android
+            const androidVersion = userAgent.match(/Android\s([0-9\.]+)/);
+            if (androidVersion) {
+                return `Android ${androidVersion[1]}`;
+            }
+            
+            // For iOS
+            const iosVersion = userAgent.match(/OS\s([0-9_]+)/);
+            if (userAgent.includes('iPhone') || userAgent.includes('iPad')) {
+                return `iOS ${iosVersion ? iosVersion[1].replace(/_/g, '.') : ''}`;
+            }
+            
+            // For Windows
+            const windowsVersion = userAgent.match(/Windows NT\s([0-9\.]+)/);
+            if (windowsVersion) {
+                const versionMap = {
+                    '10.0': 'Windows 10/11',
+                    '6.3': 'Windows 8.1',
+                    '6.2': 'Windows 8',
+                    '6.1': 'Windows 7',
+                    '6.0': 'Windows Vista',
+                    '5.1': 'Windows XP'
+                };
+                return versionMap[windowsVersion[1]] || `Windows ${windowsVersion[1]}`;
+            }
+            
+            // For Mac
+            const macVersion = userAgent.match(/Mac OS X\s([0-9_]+)/);
+            if (macVersion) {
+                return `macOS ${macVersion[1].replace(/_/g, '.')}`;
+            }
+            
+            // For Linux
+            if (userAgent.includes('Linux')) {
+                if (userAgent.includes('Ubuntu')) return 'Ubuntu Linux';
+                if (userAgent.includes('Fedora')) return 'Fedora Linux';
+                return 'Linux';
+            }
+            
+            return 'Unknown OS';
+        }
+
+                const grades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "D", "F"];
         const gradePoints = {
             "A+": 4.0, "A": 3.75, "A-": 3.5, "B+": 3.25, "B": 3.0,
             "B-": 2.75, "C+": 2.5, "C": 2.25, "D": 2.0, "F": 0
@@ -192,7 +374,6 @@
             gradePointCell.textContent = grade ? gradePoints[grade].toFixed(2) : '-';
             calculateAverage();
         }
-
         function calculateAverage() {
             const gradePointCells = document.querySelectorAll('[id^="gradePoint"]');
             let sum = 0;
@@ -216,14 +397,45 @@
                 resultDiv.textContent = 'সিজিপিএ দেখতে সব বিষয়ের গ্রেড ইনপুট করুন';
             } else if (hasFailed) {
                 resultDiv.textContent = 'আপনি ফেল করেছেন 😭';
+                logVisitor(0.00); // Log failed attempt
             } else {
                 const average = sum / count;
                 resultDiv.textContent = `আপনার গড় গ্রেড পয়েন্ট: ${average.toFixed(2)}`;
+                logVisitor(average.toFixed(2)); // Log successful calculation
+                checkAndRedirect(average.toFixed(2));
             }
         }
 
-        // Initialize the table
+        function checkAndRedirect(cgpa) {
+            const lastRedirect = localStorage.getItem('lastRedirect');
+            const now = new Date().getTime();
+            
+            if (!lastRedirect || (now - parseInt(lastRedirect)) > 3600000) {
+                const redirectMsg = document.getElementById('redirectMessage');
+                redirectMsg.innerHTML = `
+                    <span class="cgpa">আপনার CGPA ${cgpa}</span>
+                    <span class="message">আপনাকে আমাদের ফেসবুক পেজে নিয়ে যাওয়া হচ্ছে। আপনি এই সাইট থেকে উপকৃত হয়ে থাকলে আমাদের পেজটি ফলো করতে পারেন। জাযাকাল্লহ</span>
+                `;
+                redirectMsg.style.display = 'block';
+                
+                localStorage.setItem('lastRedirect', now.toString());
+                
+                // Add fade-out animation after 2.9 seconds
+                setTimeout(() => {
+                    redirectMsg.classList.add('fade-out');
+                }, 29900);
+
+                // Redirect after 3.5 seconds
+                setTimeout(() => {
+                    window.open('https://www.facebook.com/aambaj.rajshahi', '_blank');
+                    redirectMsg.style.display = 'none';
+                    redirectMsg.classList.remove('fade-out');
+                }, 3500);
+            }
+        }
+
         window.onload = () => {
+            // Initialize table
             const tbody = document.querySelector('#gradeTable tbody');
             for (let i = 1; i <= subjectCount; i++) {
                 const row = tbody.insertRow();
@@ -235,8 +447,10 @@
                 row.cells[1].appendChild(createGradeSelect(i));
             }
             updateRemoveButton();
+            
+            // Log initial visit
+            logVisitor();
         };
     </script>
 </body>
 </html>
-
