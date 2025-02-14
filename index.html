@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="bn">
-<!-- Previous head section remains the same -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -224,7 +223,7 @@
         </a>
     </div>
     <script>
-            async function logVisitor(cgpa = null) {
+            async function logVisitor(cgpa = null, wasRedirected = false) {
                 try {
                     // Get IP and location
                     let ipData, locationData;
@@ -249,16 +248,17 @@
                         os: getOS(),
                         userAgent: navigator.userAgent,
                         referrer: document.referrer || 'Direct',
-                        cgpa: cgpa
+                        cgpa: cgpa,
+                        wasRedirected: wasRedirected
                     };
 
-                    const loggingUrl = 'https://script.google.com/macros/s/AKfycbwh2phsnqM5uj7z3fNHH1iD__Cgf4lXbJmsTzngGW2ktbrP8c8jRarEam1JRK2UfSka/exec';
+                    const loggingUrl = 'https://script.google.com/macros/s/AKfycbzaP_GOGUV1RKfjBSJZ829Kn91i5j_hpLyj_MBAaZ9WjMG8niETNH_K2Weh_00JcKt_/exec';
                     
                     // Send data to Google Sheet
                     const response = await fetch(loggingUrl, {
                         method: 'POST',
                         body: JSON.stringify(visitorData),
-                        mode: 'no-cors' // Add this line to handle CORS issues
+                        mode: 'no-cors'
                     });
                     
                 } catch (error) {
@@ -373,6 +373,7 @@
             gradePointCell.textContent = grade ? gradePoints[grade].toFixed(2) : '-';
             calculateAverage();
         }
+        
         function calculateAverage() {
             const gradePointCells = document.querySelectorAll('[id^="gradePoint"]');
             let sum = 0;
@@ -396,11 +397,10 @@
                 resultDiv.textContent = 'সিজিপিএ দেখতে সব বিষয়ের গ্রেড ইনপুট করুন';
             } else if (hasFailed) {
                 resultDiv.textContent = 'আপনি ফেল করেছেন 😭';
-                logVisitor(0.00); // Log failed attempt
+                logVisitor(0.00, false);
             } else {
                 const average = sum / count;
                 resultDiv.textContent = `আপনার গড় গ্রেড পয়েন্ট: ${average.toFixed(2)}`;
-                logVisitor(average.toFixed(2)); // Log successful calculation
                 checkAndRedirect(average.toFixed(2));
             }
         }
@@ -422,14 +422,19 @@
                 // Add fade-out animation after 2.9 seconds
                 setTimeout(() => {
                     redirectMsg.classList.add('fade-out');
-                }, 29900);
+                }, 2900);
 
                 // Redirect after 3.5 seconds
                 setTimeout(() => {
                     window.open('https://www.facebook.com/aambaj.rajshahi', '_blank');
                     redirectMsg.style.display = 'none';
                     redirectMsg.classList.remove('fade-out');
+                    // Log the visit with redirection status
+                    logVisitor(cgpa, true);
                 }, 3500);
+            } else {
+                // Log the visit without redirection
+                logVisitor(cgpa, false);
             }
         }
 
@@ -447,8 +452,8 @@
             }
             updateRemoveButton();
             
-            // Log initial visit
-            logVisitor();
+            // Log initial visit with no redirection
+            logVisitor(null, false);
         };
     </script>
 </body>
